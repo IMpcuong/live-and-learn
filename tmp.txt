@@ -1,6 +1,0 @@
-2. `aws-cli`
-
-```aws
-aws configure --profile <username>/<default>
-aws <service> ls --profile <username>
-```
