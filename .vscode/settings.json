@@ -5,8 +5,11 @@
     "Dmaven",
     "globbing",
     "mydomain",
+    "objectname",
+    "oneline",
     "PKIX",
     "rundll",
-    "sysdm"
+    "sysdm",
+    "textconv"
   ]
 }
