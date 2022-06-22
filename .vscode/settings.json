@@ -3,12 +3,15 @@
     "allowall",
     "cmdchallenge",
     "Dmaven",
+    "findstr",
     "globbing",
     "mydomain",
     "objectname",
     "oneline",
     "PKIX",
+    "pwsh",
     "rundll",
+    "setx",
     "sysdm",
     "textconv"
   ]
