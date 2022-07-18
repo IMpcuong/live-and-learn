@@ -1,18 +1,28 @@
 {
   "cSpell.words": [
     "allowall",
+    "bcdedit",
     "cmdchallenge",
+    "dism",
     "Dmaven",
+    "featurename",
     "findstr",
     "globbing",
+    "hypervisorlaunchtype",
+    "localgroup",
+    "lusrmgr",
     "mydomain",
+    "norestart",
     "objectname",
     "oneline",
+    "Parsin",
     "PKIX",
     "pwsh",
     "rundll",
     "setx",
     "sysdm",
+    "taskkill",
+    "tasklist",
     "textconv"
   ]
 }
