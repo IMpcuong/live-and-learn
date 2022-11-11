@@ -1,7 +1,9 @@
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 // Source: https://tvd12.com/observer-design-pattern-catch-exception/
 public class Test {
@@ -18,6 +20,12 @@ public class Test {
 
     BiFunction<Integer, Integer, Double> divideFuncSuccess = (dividend, divisor) -> Double.valueOf(dividend / divisor);
     System.out.println(divideFuncSuccess.apply(100, 10));
+
+    String[] arrStr = new String[] {"0", "1", "2"};
+    var arrToStr = Arrays.asList(arrStr).stream()
+          .map(e -> new StringBuilder().append(e).toString())
+          .collect(Collectors.joining(""));
+    System.out.println(arrToStr);
 
     var test = new Test();
     var divider = test.new ObserverDivider();
@@ -69,8 +77,8 @@ public class Test {
       _nThread.start();
     }
 
-    public void divide(Integer a, Integer b, Callback callback) {
-      _queue.offer(new DivideReq(a, b, callback));
+    public void divide(Integer dividend, Integer divisor, Callback callback) {
+      _queue.offer(new DivideReq(dividend, divisor, callback));
     }
   }
 

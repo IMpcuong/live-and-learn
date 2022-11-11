@@ -23,8 +23,14 @@ public class ValueOfEnumValidator<Charsequence> implements ConstraintValidator<V
     if (!acceptedValues.contains(value.toString())) {
       String acceptedStr = String.join("|", acceptedValues);
       String[] msgElements = new String[] {"Must be in [", acceptedStr, "]"};
+      // Same:
+      // `Arrays.asList(msgElements).toString();`
       String msg = Arrays.toString(msgElements);
+      if (msg == "") {
+        msg = Arrays.stream(msgElements).collect(Collectors.joining(""));
+      }
       System.out.println(msg);
+
       return false;
     }
 
