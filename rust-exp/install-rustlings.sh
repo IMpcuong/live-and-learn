@@ -92,7 +92,7 @@ function vercomp() {
         max_len=$len2
     fi
 
-    #pad right in short arr
+    # Pad right in short arr:
     if [[ len1 -gt len2 ]];
     then
         for ((i = len2; i < len1; i++));
