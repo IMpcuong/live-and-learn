@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Copyright `rustlings` project's `install.sh` file.
+### Copyright belonged to `rustlings` project's `install.sh` file.
+### Source: `https://github.com/rust-lang/rustlings/blob/main/install.sh`.
 
 set -euo pipefail
 
@@ -141,7 +142,7 @@ else
     echo "SUCCESS: Rust is up to date"
 fi
 
-# Patch: A little modification apply when the "./rustlings" directory has already existed.
+### Patch: A little modification apply when the "./rustlings" directory has already existed.
 Path=${1:-rustlings/}
 echo "Cloning Rustlings at $Path..."
 if [[ ! -d $Path ]]; then
@@ -149,6 +150,7 @@ if [[ ! -d $Path ]]; then
 else
   cd $Path; git pull origin main
 fi
+### End patch.
 
 Version=$(curl -s https://api.github.com/repos/rust-lang/rustlings/releases/latest | ${PY} -c "import json,sys;obj=json.load(sys.stdin);print(obj['tag_name']);")
 CargoBin="${CARGO_HOME:-$HOME/.cargo}/bin"
