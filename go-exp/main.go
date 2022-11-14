@@ -57,7 +57,11 @@ func ConvertToPrimitive(data interface{}) string {
 			return genericData
 		}
 	}
-	return data.(string)
+
+	if strings.Contains(reflect.TypeOf(data).String(), "string") {
+		return data.(string)
+	}
+	return *new(string)
 }
 
 // Unused structure:
