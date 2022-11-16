@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -72,6 +73,13 @@ type EmbeddedStruct struct {
 	// NOTE: From line 25-28 so this was failed.
 	// _ *GenericStruct[OtherInteger] `bson:",inline"`
 	_ *GenericStruct[string] `bson:",inline"`
+}
+
+func GenericTernary[T any](condition bool, vTrue, vFalse T) T {
+	if condition {
+		return vTrue
+	}
+	return vFalse
 }
 
 // 11162022:
@@ -154,6 +162,13 @@ func main() {
 
 	n, _ := gs.ExportToFile(newFile)
 	printWithPattern("=", n)
+
+	// Link: https://golangdocs.com/converting-string-to-integer-in-golang
+	// Or we can use:
+	// testConv, _ = strconv.Atoi("100")
+	testConv, _ := strconv.ParseInt("100", 16, 64)
+	testTernaryOperator := GenericTernary(n > 1, int64(n)+testConv, 1)
+	printWithPattern("=", testTernaryOperator)
 
 	// 11162022:
 	printWithPattern("+", nil)
