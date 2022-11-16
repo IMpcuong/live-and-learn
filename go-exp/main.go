@@ -70,7 +70,7 @@ func ConvertToPrimitive(data interface{}) string {
 
 // Unused structure:
 type EmbeddedStruct struct {
-	// NOTE: From line 25-28 so this was failed.
+	// NOTE: From line 29-32 so this below field declaration was failed.
 	// _ *GenericStruct[OtherInteger] `bson:",inline"`
 	_ *GenericStruct[string] `bson:",inline"`
 }
