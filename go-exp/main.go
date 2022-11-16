@@ -101,7 +101,7 @@ func (gt GradeTuition) IsKeyExisted(key int) bool {
 	return isSlicesContains(keySlices, key)
 }
 
-func (gt *GradeTuition) CalculateTotalFee(gradeNum int) *GradeTuition {
+func (gt *GradeTuition) CalculateFeeEachGrade(gradeNum int) *GradeTuition {
 	if gradeNum == 0 || gt.IsKeyExisted(0) {
 		return nil
 	}
@@ -170,12 +170,19 @@ func main() {
 	printWithPattern("=", testKeyExisted)
 
 	gradeMap := GradeTuition{
-		1: "",
-		2: "",
-		3: "",
-		4: "",
-		5: "",
+		1:  "",
+		2:  "",
+		3:  "",
+		4:  "",
+		5:  "",
+		6:  "",
+		7:  "",
+		8:  "",
+		9:  "",
+		10: "",
+		11: "",
+		12: "",
 	}
-	printWithPattern("=", gradeMap.CalculateTotalFee(0))
-	printWithPattern("=", gradeMap.CalculateTotalFee(3))
+	printWithPattern("=", gradeMap.CalculateFeeEachGrade(0))
+	printWithPattern("=", gradeMap.CalculateFeeEachGrade(3))
 }
