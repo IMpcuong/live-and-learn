@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -70,7 +71,7 @@ func ConvertToPrimitive(data interface{}) string {
 
 // Unused structure:
 type EmbeddedStruct struct {
-	// NOTE: From line 29-32 so this below field declaration was failed.
+	// NOTE: From line 30-33 so this below field declaration was failed.
 	// _ *GenericStruct[OtherInteger] `bson:",inline"`
 	_ *GenericStruct[string] `bson:",inline"`
 }
@@ -114,6 +115,11 @@ func (gt *GradeTuition) CalculateFeeEachGrade(gradeNum int) *GradeTuition {
 		return nil
 	}
 
+	for g := 1; g <= gradeNum; g++ {
+		(*gt)[g] = ""
+	}
+	fmt.Printf("%+v\n", *gt)
+
 	var baseTuition = 100
 	for grade := range *gt {
 		if grade == 1 {
@@ -128,21 +134,37 @@ func (gt *GradeTuition) CalculateFeeEachGrade(gradeNum int) *GradeTuition {
 	return gt
 }
 
-// Core functions:
-func printWithPattern(pattern string, data interface{}) {
-	if strings.Compare("+", pattern) == 0 && data == nil {
+// 11172022:
+// Concurrency, channel, and blocked-channel in Golang demystification/proclamation by example:
+
+func printChanVal(val chan int) int {
+	val <- 10
+	return <-val
+}
+
+func insertMultiChans(left, right chan int) {
+	// NOTE: In 10e4 channels, 10e4 routines block each other in parallel.
+	// --> So all routines exist in concurrency at the same time.
+	left <- 1 + <-right // Equals to: `1 + right`.
+}
+
+// The core functions begin here:
+
+func printWithPattern(pattern, desc string, data interface{}) {
+	if strings.Compare("+", pattern) == 0 && data == nil && desc == "" {
 		today := time.Now().String()
 		fmt.Printf("%s %s\n", pattern, today)
 	}
 
-	if strings.Compare("=", pattern) == 0 && data != nil {
-		fmt.Printf("%s>\t%+v\n", strings.Repeat(pattern, 5), data)
+	if strings.Compare("=", pattern) == 0 && data != nil && desc != "" {
+		dataWithDesc := fmt.Sprintf("%s: %v", desc, data)
+		fmt.Printf("%s>\t%+v\n", strings.Repeat(pattern, 5), dataWithDesc)
 	}
 }
 
 func main() {
 	// 11152022:
-	printWithPattern("+", nil)
+	printWithPattern("+", "", nil)
 	gs := GenericStruct[string]{
 		Data: "I want something just like this! ~ One Republic",
 		Ctx:  *new(context.Context),
@@ -158,20 +180,20 @@ func main() {
 
 	fileName := "test.txt"
 	newFile, _ := gs.CreateFile(fileName)
-	printWithPattern("=", newFile)
+	printWithPattern("=", "Newfile's address", newFile)
 
 	n, _ := gs.ExportToFile(newFile)
-	printWithPattern("=", n)
+	printWithPattern("=", "File's content length", n)
 
 	// Link: https://golangdocs.com/converting-string-to-integer-in-golang
 	// Or we can use:
 	// testConv, _ = strconv.Atoi("100")
 	testConv, _ := strconv.ParseInt("100", 16, 64)
 	testTernaryOperator := GenericTernary(n > 1, int64(n)+testConv, 1)
-	printWithPattern("=", testTernaryOperator)
+	printWithPattern("=", "Ternary function execution output", testTernaryOperator)
 
 	// 11162022:
-	printWithPattern("+", nil)
+	printWithPattern("+", "", nil)
 	expGt := GradeTuition{
 		1: "100",
 		2: "100",
@@ -182,22 +204,43 @@ func main() {
 		7: "700",
 	}
 	testKeyExisted := expGt.IsKeyExisted(0)
-	printWithPattern("=", testKeyExisted)
+	printWithPattern("=", "Key existed", testKeyExisted)
 
-	gradeMap := GradeTuition{
-		1:  "",
-		2:  "",
-		3:  "",
-		4:  "",
-		5:  "",
-		6:  "",
-		7:  "",
-		8:  "",
-		9:  "",
-		10: "",
-		11: "",
-		12: "",
+	// NOTE: Cannot use `gradeMap := new/*new(GradeTuition)` -> because we couldn't assign values to nil map.
+	gradeMap := make(GradeTuition)
+	printWithPattern("=", "Calculate with grade zero", gradeMap.CalculateFeeEachGrade(0))
+	printWithPattern("=", "Calculate with positive grade number", gradeMap.CalculateFeeEachGrade(10))
+
+	// 11172022:
+	printWithPattern("+", "", nil)
+	testChanVal := make(chan int)
+
+	// NOTE: If we are not using keyword `go` to invoke new go-thread/goroutine,
+	// this error will be appeared: `fatal error: all goroutines are asleep - deadlock!`.
+	// Exp: `insertChanneling(testChanVal, nil)`.
+	go printChanVal(testChanVal)                                                        // This segment didn't return anything to stdout (?).
+	printWithPattern("=", "Total goroutines", runtime.Stack(make([]byte, 0, 10), true)) // Return: 0.
+
+	// Another example:
+	leftMost := make(chan int) // The first goroutine in the list.
+	left := leftMost           // The left one.
+	right := leftMost          // The right one.
+
+	// NOTE: In 10e4 channels, 10e4 routines block each other in parallel.
+	// --> So all routines exist in concurrency at the same time.
+	const routines = 10e4
+	for i := 0; i < routines; i++ {
+		go insertMultiChans(left, right)
+		left = right
 	}
-	printWithPattern("=", gradeMap.CalculateFeeEachGrade(0))
-	printWithPattern("=", gradeMap.CalculateFeeEachGrade(3))
+
+	// Release the last or most recently invoked routine (the "most right" one, horizontally).
+	go func(val chan int) {
+		val <- 1
+	}(right)
+
+	// NOTE: After the latest routine has been released, emitted or unveiled,
+	// all of the remaining ones will be executed as normal.
+	printWithPattern("=", "Channel's address", leftMost)
+	printWithPattern("=", "Channel's final value", <-leftMost)
 }
