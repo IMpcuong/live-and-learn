@@ -48,7 +48,8 @@ func (gs *GenericStruct[T]) CreateFile(fileName string) (*os.File, error) {
 // NOTE: Pointer receiver's generic type-parameter cannot consume slices as it type.
 func (gs *GenericStruct[T]) ExportToFile(file *os.File) (int, error) {
 	fileContent := ConvertToPrimitive(gs.Data)
-	numBytes, err := file.Write([]byte(fileContent))
+	extraData, _ := gs.TestFunc(make(chan T), time.Now())
+	numBytes, err := file.Write([]byte(fileContent + extraData))
 
 	defer file.Close()
 
