@@ -244,4 +244,15 @@ func main() {
 	// all of the remaining ones will be executed as normal.
 	printWithPattern("=", "Channel's address", leftMost)
 	printWithPattern("=", "Channel's final value", <-leftMost)
+
+	// 11222022:
+	printWithPattern("+", "", nil)
+	var ctx = context.Background()
+
+	revealCtxBackground(ctx)
+	revealCtxWithTicker(ctx)
+	revealCtxWithDeadline(ctx)
+	revealCtxWithTimeout(ctx)
+	revealCtxWithCancelSig(ctx)
+	revealCtxWithValue(ctx)
 }
