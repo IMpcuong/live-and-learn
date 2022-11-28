@@ -86,7 +86,7 @@ func revealCtxWithTimeout(ctx context.Context) {
 		printWithPattern("=", "Context's duration", "Overslept!")
 	case <-ctxWithTimeout.Done():
 		// Error: exceeded/violated the dealine constraint.
-		printWithPattern("=", "Error: ", ctxWithTimeout.Err())
+		printWithPattern("=", "Error", ctxWithTimeout.Err())
 	}
 }
 
