@@ -255,4 +255,12 @@ func main() {
 	revealCtxWithTimeout(ctx)
 	revealCtxWithCancelSig(ctx)
 	revealCtxWithValue(ctx)
+
+	// 12012022:
+	printWithPattern("+", "", nil)
+
+	var tmpArr0 = [...]int{1, 2, 3}
+	var tmpArr1 = []int{4, 5, 6}
+	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr0))
+	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr1))
 }
