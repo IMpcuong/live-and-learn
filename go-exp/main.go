@@ -282,6 +282,29 @@ func main() {
 
 	var tmpArr0 = [...]int{1, 2, 3}
 	var tmpArr1 = []int{4, 5, 6}
+	var tmpArr2 = [...]int{2: 3, 1: 2}
+	var tmpArr3 = [...]int{1, 2, 3, 5: 5, 6}
 	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr0))
 	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr1))
+	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr2))
+	printWithPattern("=", "Print array with its length", fmt.Sprintf("%#v", tmpArr3))
+
+	// NOTE: Each element of a string is immutable.
+	var testStr = "This is a list of stupidy characters"
+	var lenTestStr = (*reflect.StringHeader)(unsafe.Pointer(&testStr)).Len // Pointer Type Conversion.
+	printWithPattern("=", "Another method to retrieve a string's length", lenTestStr)
+	var testStrPtr = unsafe.Pointer(&testStr)
+	printWithPattern("=", "String pointer allocation", testStrPtr)
+	printWithPattern("=", "String pointer allocation", &testStr)
+
+	var floatNum float64 = 1.111222333
+	var floatPtr = unsafe.Pointer(&floatNum)
+	var intPtr uint64 = *(*uint64)(unsafe.Pointer(&floatNum))
+	// NOTE: Cannot convert value of type *float64 to *int64
+	// var intNum1 int64 = *(*int64)(&floatNum)
+	printWithPattern("=", "Value conversion from float->int", fmt.Sprintf( /*%g, %e, %b, %x*/ "%.9G->%d", floatNum, uint64(floatNum)))
+	printWithPattern("=", "Pointer conversion from floatPtr->intPtr", fmt.Sprintf("%d->%d", floatPtr, intPtr))
+
+	// Similar to the statement `return 0 || exit 0` from this language's dawn/primordial/architype.
+	os.Exit(0)
 }
