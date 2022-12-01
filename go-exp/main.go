@@ -62,6 +62,7 @@ func (gs *GenericStruct[T]) ExportToFile(file *os.File) (int, error) {
 
 func ConvertToPrimitive(data interface{}) string {
 	if strings.Contains(reflect.TypeOf(data).String(), "map[string]interface{}") {
+		// NOTE: Go Type Assertions.
 		destructure := data.(map[string]interface{})
 		if genericData, ok := destructure["Data"].(string); ok {
 			return genericData
@@ -69,6 +70,7 @@ func ConvertToPrimitive(data interface{}) string {
 	}
 
 	if strings.Contains(reflect.TypeOf(data).String(), "string") {
+		// NOTE: Go Type Assertions.
 		return data.(string)
 	}
 	return *new(string)
