@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 // Anouncement: This is the place for daily coding improvement by solving some interesting challenges (almost everyday!).
@@ -51,6 +52,9 @@ func (gs *GenericStruct[T]) ExportToFile(file *os.File) (int, error) {
 	extraData, _ := gs.TestFunc(make(chan T), time.Now())
 	numBytes, err := file.Write([]byte(fileContent + extraData))
 
+	// NOTE:
+	// - The `defer` statement is used to prevent the execution of a function until all other functions are executed.
+	// - When multiple `defer` are invoked in a program, the order of execution of the `defer` statements will be LIFO (Last In First Out).
 	defer file.Close()
 
 	return numBytes, err
@@ -151,7 +155,17 @@ func insertMultiChans(left, right chan int) {
 
 // The core functions begin here:
 
+func handlePanic() {
+	r := recover()
+	if r != nil {
+		fmt.Println("INFO: Process recovery: ", r)
+	}
+}
+
 func printWithPattern(pattern, desc string, data interface{}) {
+	// NOTE: Execute the handlePanic even after panic occurs.
+	defer handlePanic()
+
 	if strings.Compare("+", pattern) == 0 && data == nil && desc == "" {
 		today := time.Now().String()
 		fmt.Printf("%s %s\n", pattern, today)
@@ -160,6 +174,11 @@ func printWithPattern(pattern, desc string, data interface{}) {
 	if strings.Compare("=", pattern) == 0 && data != nil && desc != "" {
 		dataWithDesc := fmt.Sprintf("%s: %v", desc, data)
 		fmt.Printf("%s>\t%+v\n", strings.Repeat(pattern, 5), dataWithDesc)
+	}
+
+	if strings.Compare("", pattern) == 0 {
+		// NOTE: The `panic` statement is used to stop/terminate our program immediately.
+		panic("Wrong pattern indication!")
 	}
 }
 
