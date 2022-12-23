@@ -314,6 +314,9 @@ func main() {
 	var fPtr *float64 = (*float64)(unsafe.Pointer(ptr)) // Same action as the line above.
 	printWithPattern("=", "Mnemonic about pointer conversion", fmt.Sprintf("%s\t%x\t%x\t%x", str, ptr, replicaPtr, fPtr))
 
+	var replicaStr string = *(*string)(ptr)
+	printWithPattern("=", "Explicit dereferences string pointer", replicaStr)
+
 	// Similar to the statement `return 0 || exit 0` from this language's dawn/primordial/architype.
 	os.Exit(0)
 }
