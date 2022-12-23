@@ -48,7 +48,7 @@ func (gs *GenericStruct[T]) CreateFile(fileName string) (*os.File, error) {
 
 // NOTE: Pointer receiver's generic type-parameter cannot consume slices as it type.
 func (gs *GenericStruct[T]) ExportToFile(file *os.File) (int, error) {
-	fileContent := ConvertToPrimitive(gs.Data)
+	fileContent := convertToPrimitive(gs.Data)
 	extraData, _ := gs.TestFunc(make(chan T), time.Now())
 	numBytes, err := file.Write([]byte(fileContent + extraData))
 
@@ -60,7 +60,7 @@ func (gs *GenericStruct[T]) ExportToFile(file *os.File) (int, error) {
 	return numBytes, err
 }
 
-func ConvertToPrimitive(data interface{}) string {
+func convertToPrimitive(data interface{}) string {
 	if strings.Contains(reflect.TypeOf(data).String(), "map[string]interface{}") {
 		// NOTE: Go Type Assertions.
 		destructure := data.(map[string]interface{})
@@ -304,6 +304,15 @@ func main() {
 	// var intNum1 int64 = *(*int64)(&floatNum)
 	printWithPattern("=", "Value conversion from float->int", fmt.Sprintf( /*%g, %e, %b, %x*/ "%.9G->%d", floatNum, uint64(floatNum)))
 	printWithPattern("=", "Pointer conversion from floatPtr->intPtr", fmt.Sprintf("%d->%d", floatPtr, intPtr))
+
+	// 12232022:
+	printWithPattern("+", "", nil)
+
+	str := "string-slices-sth"
+	var ptr *string = &str                              // String pointer (a pointer associates with a string pointee, a variable stored address from a string-var).
+	var replicaPtr *int = (*int)(unsafe.Pointer(ptr))   // Integer pointer (cast from a string pointer).
+	var fPtr *float64 = (*float64)(unsafe.Pointer(ptr)) // Same action as the line above.
+	printWithPattern("=", "Mnemonic about pointer conversion", fmt.Sprintf("%s\t%x\t%x\t%x", str, ptr, replicaPtr, fPtr))
 
 	// Similar to the statement `return 0 || exit 0` from this language's dawn/primordial/architype.
 	os.Exit(0)
