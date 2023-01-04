@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"reflect"
 	"runtime"
@@ -316,6 +317,20 @@ func main() {
 
 	var replicaStr string = *(*string)(ptr)
 	printWithPattern("=", "Explicit dereferences string pointer", replicaStr)
+
+	// 01042023:
+	printWithPattern("+", "", nil)
+
+	var r io.Reader
+	tty, _ := os.OpenFile("/dev/tty", os.O_RDWR, 0)
+	r = tty // `var(value, type) := var(tty, *os.File)` -> `*os.File` contains several methods more than `r.Read()`
+	printWithPattern("=", "Type of `var(tty, *os.File)`", reflect.TypeOf(r))
+
+	//lint:ignore S1021 -> Reason: Need to specify concrete types declaratively.
+	var w io.Writer
+	w = r.(io.Writer) // Type assertion expression; the item inside `r` (or `var`) also implements `io.Writer` -> can assign it to `w`.
+
+	printWithPattern("=", "Type of `w(tty, *os.File)`", reflect.TypeOf(w)) // `w(nil, io.Writer~interface) := var(tty, *os.File)`
 
 	// Similar to the statement `return 0 || exit 0` from this language's dawn/primordial/architype.
 	os.Exit(0)
