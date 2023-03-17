@@ -1,1 +1,2 @@
 go run *.go
+
